@@ -1,7 +1,7 @@
 # Run this file to play game
 from settings import *
 import sys
-from random import randint, seed
+# from random import randint, seed
 
 if __name__ == '__main__':
     # Pygame Setup
@@ -20,7 +20,7 @@ if __name__ == '__main__':
                 pygame.quit()
                 sys.exit()
 
-        display.fill(colours['white'])
+        display.fill(bg_colour)
 
         # world.update()
 
