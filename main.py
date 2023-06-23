@@ -1,14 +1,11 @@
 # Run this file to play game
-import pygame
-from pytiled_parser import world
-
 from settings import *
 import sys
 # from random import randint, seed
 
 
-class Snake(pygame.sprite.Sprite):
-    def __init__(self, pos, size=(25, 25)):
+class BodyCube(pygame.sprite.Sprite):
+    def __init__(self, pos, x_dir, y_dir, size=(25, 25)):
         # Initializing Parent Class
         super().__init__()
 
@@ -16,11 +13,33 @@ class Snake(pygame.sprite.Sprite):
         self.image = pygame.Surface(size)
         self.image.fill(player_colour)
         self.rect = self.image.get_rect(center=pos)
+        self.direction = pygame.math.Vector2(x_dir, y_dir)
+
+    def update(self, keys):
+        self.rect.x += move_speed * self.direction.x
+        self.rect.y += move_speed * self.direction.y
 
 
-def begin_game_state(surface, sprite_list, new_sprites):
+class Snake:
+    def __init__(self):
+        # Creating Snake Variables
+        self.body = pygame.sprite.Group(BodyCube((W//2, H//2), 1, 0))
+        self.direction = pygame.math.Vector2(1, 0)
+
+    def update(self, keys):
+        if keys[pygame.K_LEFT]:
+            self.direction.x = -1
+            self.direction.y = 0
+
+        self.body.sprites()[0].direction = self.direction
+
+    def draw(self, surface):
+        self.body.draw(surface)
+
+
+def begin_game_state(sprite_list, new_sprites):
     sprite_list.empty()
-    sprite_list.clear(surface, bg_colour)
+    # sprite_list.clear(surface, bg_colour)
 
     for sprite in new_sprites:
         sprite_list.add(sprite)
@@ -49,27 +68,37 @@ if __name__ == '__main__':
 
     # Sprite Groups
     world_sprites = pygame.sprite.Group()
-    player = pygame.sprite.GroupSingle(Snake((W//2, H//2)))
+    snake = Snake()
 
     # Game State Start
     game_state = game_states["start"]
-    begin_game_state(display, world_sprites, [])
+    begin_game_state(world_sprites, [])
+
+    # Global Game Variables
+    keys = pygame.key.get_pressed()
 
     while True:
+        display.fill(bg_colour)
+
+        keys = pygame.key.get_pressed()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
 
-        display.fill(bg_colour)
-
-        world_sprites.update()
-        world_sprites.draw(display)
-
         if game_state == game_states["start"]:
             display.blit(start_text, start_text_rect.topleft)
+        elif game_state == game_states["playing"]:
+            snake.update(keys)
+
+        world_sprites.update(keys)
+        world_sprites.draw(display)
 
         screen.blit(pygame.transform.scale(display, (W, H)), offs)
+
+        if keys[pygame.K_SPACE] and game_state == game_states["start"]:
+            game_state = game_states["playing"]
+            begin_game_state(world_sprites, [snake.body])
 
         pygame.display.update()
         clock.tick(60)

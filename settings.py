@@ -1,5 +1,4 @@
 import pygame
-
 W = 750
 H = 600
 
@@ -24,9 +23,11 @@ bg_colour = colours['black']
 fg_colour = colours['white']
 player_colour = colours['red']
 
+move_speed = 4
+
 game_states = {
     "start": 0,
-    "play": 1,
+    "playing": 1,
     "pause": 2,
     "game-over": 3
 }
