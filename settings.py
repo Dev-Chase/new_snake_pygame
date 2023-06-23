@@ -1,7 +1,7 @@
 import pygame
 
-W = 500
-H = 500
+W = 750
+H = 600
 
 # Global Data goes here
 # Creating Color Variables
@@ -21,8 +21,11 @@ colours = {
     "purple": (130, 56, 209)
 }
 
+# font = pygame.font.SysFont('system', 30)
+
 bg_colour = colours['black']
 fg_colour = colours['white']
+player_colour = colours['red']
 
 game_states = {
     "start": 0,
