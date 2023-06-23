@@ -4,7 +4,6 @@ W = 750
 H = 600
 
 # Global Data goes here
-# Creating Color Variables
 colours = {
     "white": (255, 255, 255),
     "green": (0, 255, 0),
@@ -20,8 +19,6 @@ colours = {
     "light-green": (33, 166, 38),
     "purple": (130, 56, 209)
 }
-
-# font = pygame.font.SysFont('system', 30)
 
 bg_colour = colours['black']
 fg_colour = colours['white']
