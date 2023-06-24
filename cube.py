@@ -16,8 +16,10 @@ class Cube(pygame.sprite.Sprite):
         self.rect.x += move_speed * self.direction.x
         self.rect.y += move_speed * self.direction.y
 
-    # def change_dir(self, dir):
-    #     pass
+    def change_dir(self, dir):
+        if self.on_tile():
+            self.direction.x = dir.x
+            self.direction.y = dir.y
 
     def on_tile(self):
         if self.rect.x % tile_size == 0 and self.rect.y % tile_size == 0:
