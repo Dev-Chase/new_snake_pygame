@@ -1,6 +1,7 @@
 # Run this file to play game
 from settings import *
 from snake import Snake
+from cube import Cube
 import sys
 from random import randint
 
@@ -29,6 +30,7 @@ if __name__ == '__main__':
     # Sprite Groups
     world_sprites = pygame.sprite.Group()
     snake = Snake()
+    food = Cube(colour=food_colour)
 
     # Game State Start
     game_state = game_states["start"]
@@ -38,6 +40,7 @@ if __name__ == '__main__':
     keys = pygame.key.get_pressed()
 
     while True:
+        screen.fill(bg_colour)
         display.fill(bg_colour)
 
         keys = pygame.key.get_pressed()
@@ -50,15 +53,34 @@ if __name__ == '__main__':
         if game_state == game_states["start"]:
             display.blit(start_text, start_text_rect.topleft)
             if keys[pygame.K_SPACE]:
-                game_state = game_states["playing"]
+                # Resetting Snake and Food
                 snake.__init__()
-                begin_game_state(world_sprites, [snake.body])
+                food.__init__(colour=food_colour)
+                food.random_pos()
+                while snake.head.near(food):
+                    food.random_pos()
+
+                # Setting up and Starting the Playing State
+                game_state = game_states["playing"]
+                begin_game_state(world_sprites, [food, snake.body])
 
         # Playing Screen
         elif game_state == game_states["playing"]:
             snake.update(keys)
             world_sprites.update(keys)
-            if snake.out_of_bounds():
+            # print(any([snake.hit_cube(section) for section in snake.body.sprites()[1:]]))
+            # Food Collision Checks
+            if snake.hit_cube(food):
+                # Make the Snake Grow
+                snake.append_cube()
+                food.random_pos()
+
+                # Move the Food
+                while snake.head.near(food):
+                    food.random_pos()
+
+            # Game Over Checks
+            if snake.out_of_bounds() or any([snake.hit_cube(section) for section in snake.body.sprites()[1:]]):
                 game_state = game_states["game-over"]
                 screen_shake = FPS/8  # Screen Shake for an Eighth of a Second
                 begin_game_state(world_sprites, [snake.body])
@@ -67,9 +89,16 @@ if __name__ == '__main__':
         elif game_state == game_states["game-over"]:
             display.blit(game_over_text, game_over_text_rect.topleft)
             if keys[pygame.K_SPACE]:
-                game_state = game_states["playing"]
+                # Resetting Snake and Food
                 snake.__init__()
-                begin_game_state(world_sprites, [snake.body])
+                food.__init__(colour=food_colour)
+                food.random_pos()
+                while snake.head.near(food):
+                    food.random_pos()
+
+                # Setting up and Starting the Playing State
+                game_state = game_states["playing"]
+                begin_game_state(world_sprites, [food, snake.body])
 
         world_sprites.draw(display)
 
@@ -77,10 +106,9 @@ if __name__ == '__main__':
         if screen_shake <= 0:
             screen_shake = 0
         else:
-            screen_offs.x = randint(-2, 2)
-            screen_offs.y = randint(-2, 2)
+            screen_offs.x = randint(-25, 25)/10
+            screen_offs.y = randint(-25, 25)/10
             screen_shake -= 1
-
 
         # Moving Display on Screen in Case of Screen Shake
         screen.blit(pygame.transform.scale(display, (W, H)), (screen_offs.x, screen_offs.y))

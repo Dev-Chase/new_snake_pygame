@@ -1,9 +1,22 @@
+# Imports
 import pygame
-W = 750
-H = 600
-FPS = 40
 
-# Global Data goes here
+# Player Sizing
+tile_size = 25
+move_speed = 5
+
+# Big Picture Game Variables
+W = tile_size*30
+H = tile_size*24
+FPS = 35
+game_states = {
+    "start": 0,
+    "playing": 1,
+    "pause": 2,
+    "game-over": 3
+}
+
+# Global Colours Variables
 colours = {
     "white": (255, 255, 255),
     "green": (0, 255, 0),
@@ -23,21 +36,12 @@ colours = {
 bg_colour = colours['black']
 fg_colour = colours['white']
 player_colour = colours['red']
-
-tile_size = 25
-move_speed = 5
-
-game_states = {
-    "start": 0,
-    "playing": 1,
-    "pause": 2,
-    "game-over": 3
-}
+food_colour = colours['green']
 
 
+# Global Functions
 def begin_game_state(sprite_list, new_sprites):
     sprite_list.empty()
-    # sprite_list.clear(surface, bg_colour)
 
     for sprite in new_sprites:
         sprite_list.add(sprite)
