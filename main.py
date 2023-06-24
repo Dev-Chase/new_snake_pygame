@@ -31,10 +31,10 @@ if __name__ == '__main__':
     world_sprites = pygame.sprite.Group()
     snake = Snake()
     food = Cube(colour=food_colour)
+    food_sprite = pygame.sprite.GroupSingle(food)
 
     # Game State Start
     game_state = game_states["start"]
-    begin_game_state(world_sprites, [])
 
     # Global Game Variables
     keys = pygame.key.get_pressed()
@@ -62,13 +62,11 @@ if __name__ == '__main__':
 
                 # Setting up and Starting the Playing State
                 game_state = game_states["playing"]
-                begin_game_state(world_sprites, [food, snake.body])
 
         # Playing Screen
         elif game_state == game_states["playing"]:
             snake.update(keys)
-            world_sprites.update(keys)
-            # print(any([snake.hit_cube(section) for section in snake.body.sprites()[1:]]))
+
             # Food Collision Checks
             if snake.hit_cube(food):
                 # Make the Snake Grow
@@ -83,7 +81,9 @@ if __name__ == '__main__':
             if snake.out_of_bounds() or any([snake.hit_cube(section) for section in snake.body.sprites()[1:]]):
                 game_state = game_states["game-over"]
                 screen_shake = FPS/8  # Screen Shake for an Eighth of a Second
-                begin_game_state(world_sprites, [snake.body])
+
+            display.blit(food.image, food.rect.topleft)
+            snake.body.draw(display)
 
         # Game Over Screen
         elif game_state == game_states["game-over"]:
@@ -98,9 +98,7 @@ if __name__ == '__main__':
 
                 # Setting up and Starting the Playing State
                 game_state = game_states["playing"]
-                begin_game_state(world_sprites, [food, snake.body])
-
-        world_sprites.draw(display)
+            snake.body.draw(display)
 
         # Implement Screen Shake
         if screen_shake <= 0:

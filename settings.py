@@ -40,8 +40,3 @@ food_colour = colours['green']
 
 
 # Global Functions
-def begin_game_state(sprite_list, new_sprites):
-    sprite_list.empty()
-
-    for sprite in new_sprites:
-        sprite_list.add(sprite)
