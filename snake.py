@@ -10,6 +10,9 @@ class Snake:
 
         self.direction = pygame.math.Vector2(1, 0)
 
+    def reset(self):
+        pass
+
     def update(self, keys):
         if keys[pygame.K_LEFT] and not self.head.direction.x == 1:
             self.direction.x = -1

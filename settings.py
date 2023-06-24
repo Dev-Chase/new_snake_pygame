@@ -1,6 +1,7 @@
 import pygame
 W = 750
 H = 600
+FPS = 40
 
 # Global Data goes here
 colours = {

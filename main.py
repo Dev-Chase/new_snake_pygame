@@ -2,7 +2,7 @@
 from settings import *
 from snake import Snake
 import sys
-# from random import randint, seed
+from random import randint
 
 
 if __name__ == '__main__':
@@ -14,12 +14,12 @@ if __name__ == '__main__':
     # Sprite Drawing Variables
     screen = pygame.display.set_mode((W, H))
     display = pygame.Surface((W, H))
-    offs = (0, 0)
+    screen_offs = pygame.math.Vector2(0, 0)
     screen_shake = 0
 
     # Text Variables
     font = pygame.font.SysFont('system', 30)
-    game_over_text = font.render('Game Over.', True, fg_colour)
+    game_over_text = font.render('Game Over. Press Space to Start.', True, fg_colour)
     start_text = font.render('Press Space to Start', True, fg_colour)
 
     # Text Rectangles
@@ -51,21 +51,39 @@ if __name__ == '__main__':
             display.blit(start_text, start_text_rect.topleft)
             if keys[pygame.K_SPACE]:
                 game_state = game_states["playing"]
+                snake.__init__()
                 begin_game_state(world_sprites, [snake.body])
+
         # Playing Screen
         elif game_state == game_states["playing"]:
             snake.update(keys)
             world_sprites.update(keys)
             if snake.out_of_bounds():
                 game_state = game_states["game-over"]
+                screen_shake = FPS/8  # Screen Shake for an Eighth of a Second
                 begin_game_state(world_sprites, [snake.body])
+
         # Game Over Screen
         elif game_state == game_states["game-over"]:
             display.blit(game_over_text, game_over_text_rect.topleft)
+            if keys[pygame.K_SPACE]:
+                game_state = game_states["playing"]
+                snake.__init__()
+                begin_game_state(world_sprites, [snake.body])
 
         world_sprites.draw(display)
 
-        screen.blit(pygame.transform.scale(display, (W, H)), offs)
+        # Implement Screen Shake
+        if screen_shake <= 0:
+            screen_shake = 0
+        else:
+            screen_offs.x = randint(-2, 2)
+            screen_offs.y = randint(-2, 2)
+            screen_shake -= 1
+
+
+        # Moving Display on Screen in Case of Screen Shake
+        screen.blit(pygame.transform.scale(display, (W, H)), (screen_offs.x, screen_offs.y))
 
         pygame.display.update()
-        clock.tick(40)
+        clock.tick(FPS)
