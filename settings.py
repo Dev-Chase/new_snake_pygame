@@ -23,7 +23,8 @@ bg_colour = colours['black']
 fg_colour = colours['white']
 player_colour = colours['red']
 
-move_speed = 3
+tile_size = 25
+move_speed = 5
 
 game_states = {
     "start": 0,

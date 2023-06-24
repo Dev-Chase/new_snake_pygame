@@ -15,7 +15,7 @@ if __name__ == '__main__':
     screen = pygame.display.set_mode((W, H))
     display = pygame.Surface((W, H))
     offs = (0, 0)
-    # screen_shake = 0
+    screen_shake = 0
 
     # Text Variables
     font = pygame.font.SysFont('system', 30)
@@ -46,19 +46,26 @@ if __name__ == '__main__':
                 pygame.quit()
                 sys.exit()
 
+        # Start Screen
         if game_state == game_states["start"]:
             display.blit(start_text, start_text_rect.topleft)
+            if keys[pygame.K_SPACE]:
+                game_state = game_states["playing"]
+                begin_game_state(world_sprites, [snake.body])
+        # Playing Screen
         elif game_state == game_states["playing"]:
             snake.update(keys)
+            world_sprites.update(keys)
+            if snake.out_of_bounds():
+                game_state = game_states["game-over"]
+                begin_game_state(world_sprites, [snake.body])
+        # Game Over Screen
+        elif game_state == game_states["game-over"]:
+            display.blit(game_over_text, game_over_text_rect.topleft)
 
-        world_sprites.update(keys)
         world_sprites.draw(display)
 
         screen.blit(pygame.transform.scale(display, (W, H)), offs)
 
-        if keys[pygame.K_SPACE] and game_state == game_states["start"]:
-            game_state = game_states["playing"]
-            begin_game_state(world_sprites, [snake.body])
-
         pygame.display.update()
-        clock.tick(60)
+        clock.tick(40)
