@@ -1,48 +1,8 @@
 # Run this file to play game
 from settings import *
+from snake import Snake
 import sys
 # from random import randint, seed
-
-
-class BodyCube(pygame.sprite.Sprite):
-    def __init__(self, pos, x_dir, y_dir, size=(25, 25)):
-        # Initializing Parent Class
-        super().__init__()
-
-        # Initializing Core Sprite Variables
-        self.image = pygame.Surface(size)
-        self.image.fill(player_colour)
-        self.rect = self.image.get_rect(center=pos)
-        self.direction = pygame.math.Vector2(x_dir, y_dir)
-
-    def update(self, keys):
-        self.rect.x += move_speed * self.direction.x
-        self.rect.y += move_speed * self.direction.y
-
-
-class Snake:
-    def __init__(self):
-        # Creating Snake Variables
-        self.body = pygame.sprite.Group(BodyCube((W//2, H//2), 1, 0))
-        self.direction = pygame.math.Vector2(1, 0)
-
-    def update(self, keys):
-        if keys[pygame.K_LEFT]:
-            self.direction.x = -1
-            self.direction.y = 0
-
-        self.body.sprites()[0].direction = self.direction
-
-    def draw(self, surface):
-        self.body.draw(surface)
-
-
-def begin_game_state(sprite_list, new_sprites):
-    sprite_list.empty()
-    # sprite_list.clear(surface, bg_colour)
-
-    for sprite in new_sprites:
-        sprite_list.add(sprite)
 
 
 if __name__ == '__main__':

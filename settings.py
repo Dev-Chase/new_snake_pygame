@@ -23,7 +23,7 @@ bg_colour = colours['black']
 fg_colour = colours['white']
 player_colour = colours['red']
 
-move_speed = 4
+move_speed = 3
 
 game_states = {
     "start": 0,
@@ -31,3 +31,11 @@ game_states = {
     "pause": 2,
     "game-over": 3
 }
+
+
+def begin_game_state(sprite_list, new_sprites):
+    sprite_list.empty()
+    # sprite_list.clear(surface, bg_colour)
+
+    for sprite in new_sprites:
+        sprite_list.add(sprite)
