@@ -1,7 +1,7 @@
 # Run this file to play game
 from settings import *
-from snake import Snake
-from cube import Cube
+# from snake import Snake
+# from cube import Cube
 import sys
 
 
@@ -27,16 +27,10 @@ if __name__ == '__main__':
     start_text_rect = start_text.get_rect(center=(W//2, H//2))
 
     # Sprite Groups
-    world_sprites = pygame.sprite.Group()
-    snake = Snake()
-    food = Cube(colour=food_colour)
-    food_sprite = pygame.sprite.GroupSingle(food)
+
 
     # Game State Start
     game_state = game_states["start"]
-
-    # Global Game Variables
-    keys = pygame.key.get_pressed()
 
     while True:
         display.fill(bg_colour)
@@ -51,52 +45,26 @@ if __name__ == '__main__':
         if game_state == game_states["start"]:
             display.blit(start_text, start_text_rect.topleft)
             if keys[pygame.K_SPACE]:
-                # Resetting Snake and Food
-                snake.__init__()
-                food.__init__(colour=food_colour)
-                food.go_to(random_pos())
-                while snake.head.near(food):
-                    food.go_to(random_pos())
-
                 # Setting up and Starting the Playing State
                 game_state = game_states["playing"]
 
         # Playing Screen
         elif game_state == game_states["playing"]:
-            snake.update(keys)
-
-            # Food Collision Checks
-            if snake.hit_cube(food):
-                # Make the Snake Grow
-                snake.append_cube()
-                food.go_to(random_pos())
-
-                # Move the Food
-                while snake.head.near(food):
-                    food.go_to(random_pos())
-
             # Game Over Checks
-            if snake.out_of_bounds():
+            if keys[pygame.K_k]:
                 game_state = game_states["game-over"]
                 screen_shake = FPS/8  # Screen Shake for an Eighth of a Second
 
-            display.blit(food.image, food.rect.topleft)
-            snake.body.draw(display)
+            # Updating
+            # Drawing
 
         # Game Over Screen
         elif game_state == game_states["game-over"]:
             display.blit(game_over_text, game_over_text_rect.topleft)
             if keys[pygame.K_SPACE]:
-                # Resetting Snake and Food
-                snake.__init__()
-                food.__init__(colour=food_colour)
-                food.go_to(random_pos())
-                while snake.head.near(food):
-                    food.go_to(random_pos())
-
                 # Setting up and Starting the Playing State
                 game_state = game_states["playing"]
-            snake.body.draw(display)
+            # Drawing
 
         # Implement Screen Shake
         if screen_shake <= 0:
