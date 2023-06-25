@@ -85,16 +85,9 @@ class Snake:
 
     # Food Collision Check
     def hit_food(self, food):
-        if self.body[0].rect.colliderect(food.rect):
+        if any([item.rect.colliderect(food.rect) for item in self.body]):
             return True
         return False
-
-    # Near Food Check (for randomizing placement)
-    def near_food(self, food_pos):
-        head = self.body[0].rect
-        if abs(head.centerx-food_pos[0]) > tile_size*2 and abs(head.centery-food_pos[1]) > tile_size*2:
-            return False
-        return True
 
     # Snake Movement Method
     def move(self):

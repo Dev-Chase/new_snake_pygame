@@ -7,8 +7,8 @@ tile_size = 24
 move_speed = 4
 
 # Big Picture Game Variables
-W = tile_size*25
-H = tile_size*21
+W = tile_size*20
+H = tile_size*18
 FPS = 35
 
 game_states = {
@@ -45,7 +45,7 @@ food_colour = colours['green']
 
 # Global Functions
 def random_pos():
-    return pygame.math.Vector2(randint(2, W - tile_size - 2), randint(2, H - tile_size - 2))
+    return pygame.math.Vector2(randint(2, W - tile_size - 2), randint(int(tile_size*1.25), H - tile_size - 2))
 
 
 def get_high_score():

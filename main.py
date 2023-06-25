@@ -21,7 +21,7 @@ if __name__ == '__main__':
     food = Cube(pos=random_pos(), colour=food_colour)
     score = 0
     high_score = get_high_score()
-    while snake.near_food(food.rect.center):
+    while snake.hit_food(food):
         food.rect.topleft = random_pos()
 
     text_box = TextBox("Press Space to Start")  # Main Text
@@ -66,7 +66,7 @@ if __name__ == '__main__':
                 snake.grow()
 
                 food.rect.topleft = random_pos()
-                while snake.near_food(food.rect.center):
+                while snake.hit_food(food) and not score == W//tile_size*H//tile_size:
                     food.rect.topleft = random_pos()
 
             # Game Over Checks
