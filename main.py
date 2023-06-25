@@ -1,7 +1,6 @@
 # Run this file to play game
 from settings import *
-from snake import Snake
-# from cube import Cube
+from snake import Snake, Cube
 from textbox import TextBox
 import sys
 
@@ -12,18 +11,19 @@ if __name__ == '__main__':
     clock = pygame.time.Clock()
     pygame.display.set_caption("New Snake")
 
-    # Display and Sprite Variables
+    # Game Variables
     screen = pygame.display.set_mode((W, H))
     display = pygame.Surface((W, H))
     screen_offs = pygame.math.Vector2(0, 0)
     screen_shake = 0
-    snake = Snake()
-
-    # Text Boxes
-    text_box = TextBox("Press Space to Start")
-
-    # Game State Start
     game_state = game_states["start"]
+    snake = Snake()
+    food = Cube(pos=random_pos(), colour=food_colour)
+    while snake.near_food(food.rect.center):
+        food.rect.topleft = random_pos()
+
+    # Text Box to Hold Start, Pause, and Game Over Text
+    text_box = TextBox("Press Space to Start")
 
     while True:
         display.fill(bg_colour)
@@ -38,9 +38,9 @@ if __name__ == '__main__':
                     # Setting up and Starting the Playing State
                     game_state = game_states["playing"]
                     snake.__init__()
-                elif game_states["playing"]:
-                    if event.key == pygame.K_f:
-                        snake.grow()
+                # elif game_states["playing"]:
+                #     if event.key == pygame.K_f:
+                #         snake.grow()
 
         # Start Screen
         if game_state == game_states["start"]:
@@ -49,11 +49,15 @@ if __name__ == '__main__':
         # Playing Screen
         elif game_state == game_states["playing"]:
             # Food Collision
-            # if pygame.key.get_pressed()[pygame.K_f]:
-            #     snake.grow()
+            if snake.hit_food(food):
+                snake.grow()
+
+                food.rect.topleft = random_pos()
+                while snake.near_food(food.rect.center):
+                    food.rect.topleft = random_pos()
 
             # Game Over Checks
-            if pygame.key.get_pressed()[pygame.K_k]:
+            if snake.is_dead():
                 text_box.__init__("Game Over. Press Space to Start.")
                 game_state = game_states["game-over"]
                 screen_shake = FPS/8  # Screen Shake for an Eighth of a Second
@@ -62,6 +66,7 @@ if __name__ == '__main__':
             snake.update()
 
             # Drawing
+            display.blit(food.image, food.rect.topleft)
             snake.draw(display)
 
         # Game Over Screen

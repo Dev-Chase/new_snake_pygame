@@ -3,8 +3,8 @@ import pygame
 from random import randint
 
 # Player Sizing
-tile_size = 25
-move_speed = 5
+tile_size = 24
+move_speed = 4
 
 # Big Picture Game Variables
 W = tile_size*30
@@ -31,7 +31,9 @@ colours = {
     "orange": (255, 153, 0),
     "lightblue": (70, 136, 242),
     "light-green": (33, 166, 38),
-    "purple": (130, 56, 209)
+    "purple": (130, 56, 209),
+    "dark-red": (112, 12, 12),
+    "lighter-red": (158, 13, 13)
 }
 
 bg_colour = colours['black']

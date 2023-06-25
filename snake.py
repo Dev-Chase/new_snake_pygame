@@ -41,13 +41,16 @@ class Snake:
         elif keys[pygame.K_DOWN] and not self.body[0].direction.y:
             self.change_dir(0, 1)
 
-        # Changing Snake Directions if Requested
-        if self.on_tile() and self.should_change:  # Only if on Tile
-            self.body[0].look_at(self.desired_x, self.desired_y)
-            self.should_change = False
-        
         # Moving Snake
         self.move()
+        for i in range(1, len(self.body)):
+            x = -i-1
+            self.body[-i].rect.topleft = self.body[x].rect.topleft
+
+        # Changing Snake Directions if Requested and On Tile
+        if self.on_tile() and self.should_change:
+            self.body[0].look_at(self.desired_x, self.desired_y)
+            self.should_change = False
 
     # Changing Directions Method
     def change_dir(self, x, y):
@@ -63,8 +66,8 @@ class Snake:
 
     # Method for Growing Snake after Collision w/ Food
     def grow(self):
-        # print("added")
-        pass
+        for i in range(tile_size//move_speed):
+            self.body.append(Cube(pos=self.body[-1].rect.topleft))
 
     # On Tile Check Method
     def on_tile(self):
@@ -72,17 +75,26 @@ class Snake:
             return True
         return False
 
-    # Crash Check
-    def crashed(self):
-        if any([self.body[0].rect.colliderect(item) for item in self.body[1::]]):
+    # Check if Snake is Out of Bounds or Crashed into the Body
+    def is_dead(self):
+        if self.body[0].rect.top < 0 or self.body[0].rect.left < 0 or self.body[0].rect.right > W or self.body[0].rect.bottom > H:
+            return True
+        elif len(self.body) > 1+tile_size//move_speed*3 and any([self.body[0].rect.colliderect(item) for item in self.body[tile_size//move_speed*3:]]):
             return True
         return False
 
-    # Bounds Check
-    def in_bounds(self):
-        if self.body[0].rect.top > -1 and self.body[0].rect.left > -1 and self.body[0].rect.right < W+1 and self.body[0].rect.bottom < H+1:
+    # Food Collision Check
+    def hit_food(self, food):
+        if self.body[0].rect.colliderect(food.rect):
             return True
         return False
+
+    # Near Food Check (for randomizing placement)
+    def near_food(self, food_pos):
+        head = self.body[0].rect
+        if abs(head.centerx-food_pos[0]) > tile_size*2 and abs(head.centery-food_pos[1]) > tile_size*2:
+            return False
+        return True
 
     # Snake Movement Method
     def move(self):
