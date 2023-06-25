@@ -1,7 +1,8 @@
 # Run this file to play game
 from settings import *
-# from snake import Snake
+from snake import Snake
 # from cube import Cube
+from textbox import TextBox
 import sys
 
 
@@ -11,23 +12,15 @@ if __name__ == '__main__':
     clock = pygame.time.Clock()
     pygame.display.set_caption("New Snake")
 
-    # Sprite Drawing Variables
+    # Display and Sprite Variables
     screen = pygame.display.set_mode((W, H))
     display = pygame.Surface((W, H))
     screen_offs = pygame.math.Vector2(0, 0)
     screen_shake = 0
+    snake = Snake()
 
-    # Text Variables
-    font = pygame.font.SysFont('system', 30)
-    game_over_text = font.render('Game Over. Press Space to Start.', True, fg_colour)
-    start_text = font.render('Press Space to Start', True, fg_colour)
-
-    # Text Rectangles
-    game_over_text_rect = game_over_text.get_rect(center=(W//2, H//2))
-    start_text_rect = start_text.get_rect(center=(W//2, H//2))
-
-    # Sprite Groups
-
+    # Text Boxes
+    text_box = TextBox("Press Space to Start")
 
     # Game State Start
     game_state = game_states["start"]
@@ -41,30 +34,31 @@ if __name__ == '__main__':
                 pygame.quit()
                 sys.exit()
 
+            if event.type == pygame.KEYDOWN and game_state == game_states["start"] or game_state == game_states["game-over"]:
+                game_state = game_states["playing"]
+
         # Start Screen
         if game_state == game_states["start"]:
-            display.blit(start_text, start_text_rect.topleft)
-            if keys[pygame.K_SPACE]:
-                # Setting up and Starting the Playing State
-                game_state = game_states["playing"]
+            display.blit(text_box.text, text_box.rect.topleft)
 
         # Playing Screen
         elif game_state == game_states["playing"]:
             # Game Over Checks
             if keys[pygame.K_k]:
+                text_box.__init__("Game Over. Press Space to Start.")
                 game_state = game_states["game-over"]
                 screen_shake = FPS/8  # Screen Shake for an Eighth of a Second
 
             # Updating
             # Drawing
+            snake.display(display)
 
         # Game Over Screen
         elif game_state == game_states["game-over"]:
-            display.blit(game_over_text, game_over_text_rect.topleft)
-            if keys[pygame.K_SPACE]:
-                # Setting up and Starting the Playing State
-                game_state = game_states["playing"]
+            display.blit(text_box.text, text_box.rect.topleft)
+
             # Drawing
+            snake.display(display)
 
         # Implement Screen Shake
         if screen_shake <= 0:
@@ -76,7 +70,7 @@ if __name__ == '__main__':
             screen_offs.y = randint(-22, 22)/10
             screen_shake -= 1
 
-        # Moving Display on Screen in Case of Screen Shake
+        # Moving Placing Display on Screen According to Screen Shake Offsets
         screen.blit(pygame.transform.scale(display, (W, H)), (screen_offs.x, screen_offs.y))
 
         pygame.display.update()
