@@ -28,14 +28,19 @@ if __name__ == '__main__':
     while True:
         display.fill(bg_colour)
 
-        keys = pygame.key.get_pressed()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
 
-            if event.type == pygame.KEYDOWN and game_state == game_states["start"] or game_state == game_states["game-over"]:
-                game_state = game_states["playing"]
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE and game_state != game_states["playing"]:
+                    # Setting up and Starting the Playing State
+                    game_state = game_states["playing"]
+                    snake.__init__()
+                elif game_states["playing"]:
+                    if event.key == pygame.K_f:
+                        snake.grow()
 
         # Start Screen
         if game_state == game_states["start"]:
@@ -43,22 +48,28 @@ if __name__ == '__main__':
 
         # Playing Screen
         elif game_state == game_states["playing"]:
+            # Food Collision
+            # if pygame.key.get_pressed()[pygame.K_f]:
+            #     snake.grow()
+
             # Game Over Checks
-            if keys[pygame.K_k]:
+            if pygame.key.get_pressed()[pygame.K_k]:
                 text_box.__init__("Game Over. Press Space to Start.")
                 game_state = game_states["game-over"]
                 screen_shake = FPS/8  # Screen Shake for an Eighth of a Second
 
             # Updating
+            snake.update()
+
             # Drawing
-            snake.display(display)
+            snake.draw(display)
 
         # Game Over Screen
         elif game_state == game_states["game-over"]:
             display.blit(text_box.text, text_box.rect.topleft)
 
             # Drawing
-            snake.display(display)
+            snake.draw(display)
 
         # Implement Screen Shake
         if screen_shake <= 0:
