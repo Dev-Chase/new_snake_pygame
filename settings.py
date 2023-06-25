@@ -14,7 +14,7 @@ FPS = 35
 game_states = {
     "start": 0,
     "playing": 1,
-    "pause": 2,
+    "paused": 2,
     "game-over": 3
 }
 

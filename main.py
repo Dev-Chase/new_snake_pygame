@@ -24,7 +24,7 @@ if __name__ == '__main__':
     while snake.hit_food(food):
         food.rect.topleft = random_pos()
 
-    text_box = TextBox("Press Space to Start")  # Main Text
+    text_box = TextBox("Press Space to Start", font_size=36)  # Main Text
     score_box = TextBox(f"Score: {score}")  # Current Score Text
     high_score_box = TextBox(f"High Score: {high_score}")  # High Score Text
 
@@ -48,9 +48,14 @@ if __name__ == '__main__':
                     score = 0
                     score_box.__init__(f"Score: {score}")
                     score_box.rect.topright = (W - 6, 6)
-                # elif game_states["playing"]:
-                #     if event.key == pygame.K_f:
-                #         snake.grow()
+                elif event.key == pygame.K_ESCAPE:
+                    # Pausing the Game
+                    if game_state == game_states["playing"]:
+                        game_state = game_states["paused"]
+                        text_box.__init__("Press ESC to Resume", font_size=36)
+                    # Un-Pausing the Game
+                    elif game_state == game_states["paused"]:
+                        game_state = game_states["playing"]
 
         # Start Screen
         if game_state == game_states["start"]:
@@ -71,7 +76,7 @@ if __name__ == '__main__':
 
             # Game Over Checks
             if snake.is_dead():
-                text_box.__init__("Game Over. Press Space to Start.")
+                text_box.__init__("Press Space to Start.", font_size=36)
                 game_state = game_states["game-over"]
                 if score > high_score:
                     write_high_score(score)
@@ -92,6 +97,15 @@ if __name__ == '__main__':
         # Game Over Screen
         elif game_state == game_states["game-over"]:
             # Drawing
+            snake.draw(display)
+            display.blit(text_box.text, text_box.rect.topleft)
+            display.blit(score_box.text, score_box.rect.topleft)
+            display.blit(high_score_box.text, high_score_box.rect.topleft)
+
+        # Pause Screen
+        elif game_state == game_states["paused"]:
+            # Drawing
+            display.blit(food.image, food.rect.topleft)
             snake.draw(display)
             display.blit(text_box.text, text_box.rect.topleft)
             display.blit(score_box.text, score_box.rect.topleft)
