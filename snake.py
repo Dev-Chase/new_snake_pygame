@@ -13,30 +13,36 @@ class Snake:
 
     def update(self, keys):
         # Horizontal Movement Checks
-        if keys[pygame.K_LEFT] and not self.head.dir.x == 1:  # TODO Existing Movement Checks
+        if keys[pygame.K_LEFT] and self.head.dir.x == 0:
             self.direction.x = -1
             self.direction.y = 0
-            self.should_change = True
-        elif keys[pygame.K_RIGHT] and not self.head.dir.x == -1:
+        elif keys[pygame.K_RIGHT] and self.head.dir.x == 0:
             self.direction.x = 1
             self.direction.y = 0
-            self.should_change = True
 
         # Vertical Movement Checks
-        if keys[pygame.K_UP] and not self.head.dir.y == 1:
+        if keys[pygame.K_UP] and self.head.dir.y == 0:
             self.direction.x = 0
             self.direction.y = -1
-            self.should_change = True
-        elif keys[pygame.K_DOWN] and not self.head.dir.y == -1:
+        elif keys[pygame.K_DOWN] and self.head.dir.y == 0:
             self.direction.x = 0
             self.direction.y = 1
-            self.should_change = True
 
         # Insert for loop to Change Body Directions
-        if self.should_change:
-            self.should_change = self.head.change_dir(self.direction)  # (keep trying until on tile)
+        # Checking if On Tile
+        if self.head.rect.x % tile_size == 0 and self.head.rect.y % tile_size == 0:
+            for i in range(1, len(self.body.sprites())):
+                # -i = Current Position in Array, Starting from End
+                # -i-1 = Cube Position Inherited by Current Position
 
-        self.body.update()  #TODO fix weird movement
+                self.body.sprites()[-i].rect.topleft = self.body.sprites()[-i-1].rect.topleft-self.body.sprites()[-i].dir*tile_size
+                self.body.sprites()[-i].dir = self.body.sprites()[-i-1].dir
+                # cube.change_dir(self.body.sprites()[i-1].dir)
+            self.body.sprites()[0].change_dir(self.direction)  # (keep trying until on tile)
+
+        # self.body.update()  #TODO fix weird movement (moving at the same time as going to previous cubes pos)
+        self.body.update()
+        # print([cube.dir for cube in self.body.sprites()])
 
     # Out of Bounds Check
     def out_of_bounds(self):

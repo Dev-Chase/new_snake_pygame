@@ -3,7 +3,6 @@ from settings import *
 from snake import Snake
 from cube import Cube
 import sys
-from random import randint
 
 
 if __name__ == '__main__':
@@ -40,7 +39,6 @@ if __name__ == '__main__':
     keys = pygame.key.get_pressed()
 
     while True:
-        screen.fill(bg_colour)
         display.fill(bg_colour)
 
         keys = pygame.key.get_pressed()
@@ -56,9 +54,9 @@ if __name__ == '__main__':
                 # Resetting Snake and Food
                 snake.__init__()
                 food.__init__(colour=food_colour)
-                food.random_pos()
+                food.go_to(random_pos())
                 while snake.head.near(food):
-                    food.random_pos()
+                    food.go_to(random_pos())
 
                 # Setting up and Starting the Playing State
                 game_state = game_states["playing"]
@@ -71,14 +69,14 @@ if __name__ == '__main__':
             if snake.hit_cube(food):
                 # Make the Snake Grow
                 snake.append_cube()
-                food.random_pos()
+                food.go_to(random_pos())
 
                 # Move the Food
                 while snake.head.near(food):
-                    food.random_pos()
+                    food.go_to(random_pos())
 
             # Game Over Checks
-            if snake.out_of_bounds() or any([snake.hit_cube(section) for section in snake.body.sprites()[1:]]):
+            if snake.out_of_bounds():
                 game_state = game_states["game-over"]
                 screen_shake = FPS/8  # Screen Shake for an Eighth of a Second
 
@@ -92,9 +90,9 @@ if __name__ == '__main__':
                 # Resetting Snake and Food
                 snake.__init__()
                 food.__init__(colour=food_colour)
-                food.random_pos()
+                food.go_to(random_pos())
                 while snake.head.near(food):
-                    food.random_pos()
+                    food.go_to(random_pos())
 
                 # Setting up and Starting the Playing State
                 game_state = game_states["playing"]
@@ -103,9 +101,11 @@ if __name__ == '__main__':
         # Implement Screen Shake
         if screen_shake <= 0:
             screen_shake = 0
+            screen_offs.x = 0
+            screen_offs.y = 0
         else:
-            screen_offs.x = randint(-25, 25)/10
-            screen_offs.y = randint(-25, 25)/10
+            screen_offs.x = randint(-22, 22)/10
+            screen_offs.y = randint(-22, 22)/10
             screen_shake -= 1
 
         # Moving Display on Screen in Case of Screen Shake

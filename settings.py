@@ -1,5 +1,6 @@
 # Imports
 import pygame
+from random import randint
 
 # Player Sizing
 tile_size = 25
@@ -40,3 +41,5 @@ food_colour = colours['green']
 
 
 # Global Functions
+def random_pos():
+    return pygame.math.Vector2(randint(2, W - tile_size - 2), randint(2, H - tile_size - 2))
