@@ -66,7 +66,7 @@ class Snake:
 
     # Method for Growing Snake after Collision w/ Food
     def grow(self):
-        for i in range(tile_size//move_speed):
+        for i in range(tile_size//move_speed-1):
             self.body.append(Cube(pos=self.body[-1].rect.topleft))
 
     # On Tile Check Method
@@ -79,7 +79,7 @@ class Snake:
     def is_dead(self):
         if self.body[0].rect.top < 0 or self.body[0].rect.left < 0 or self.body[0].rect.right > W or self.body[0].rect.bottom > H:
             return True
-        elif len(self.body) > 1+tile_size//move_speed*3 and any([self.body[0].rect.colliderect(item) for item in self.body[tile_size//move_speed*3:]]):
+        elif len(self.body) > 1 + tile_size//move_speed*3 and any([self.body[0].rect.colliderect(item) for item in self.body[tile_size//move_speed*3:]]):
             return True
         return False
 

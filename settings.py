@@ -7,9 +7,10 @@ tile_size = 24
 move_speed = 4
 
 # Big Picture Game Variables
-W = tile_size*30
-H = tile_size*24
+W = tile_size*25
+H = tile_size*21
 FPS = 35
+
 game_states = {
     "start": 0,
     "playing": 1,
@@ -17,7 +18,7 @@ game_states = {
     "game-over": 3
 }
 
-# Global Colours Variables
+# Global Colour Variables
 colours = {
     "white": (255, 255, 255),
     "green": (0, 255, 0),
@@ -45,3 +46,14 @@ food_colour = colours['green']
 # Global Functions
 def random_pos():
     return pygame.math.Vector2(randint(2, W - tile_size - 2), randint(2, H - tile_size - 2))
+
+
+def get_high_score():
+    with open("highscore.txt", "r") as file:
+        return int(file.readlines()[-1])
+
+
+def write_high_score(val):
+    with open("highscore.txt", "a") as file:
+        file.write(f"\n{val}")
+

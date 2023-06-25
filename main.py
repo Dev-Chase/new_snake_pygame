@@ -19,11 +19,18 @@ if __name__ == '__main__':
     game_state = game_states["start"]
     snake = Snake()
     food = Cube(pos=random_pos(), colour=food_colour)
+    score = 0
+    high_score = get_high_score()
     while snake.near_food(food.rect.center):
         food.rect.topleft = random_pos()
 
-    # Text Box to Hold Start, Pause, and Game Over Text
-    text_box = TextBox("Press Space to Start")
+    text_box = TextBox("Press Space to Start")  # Main Text
+    score_box = TextBox(f"Score: {score}")  # Current Score Text
+    high_score_box = TextBox(f"High Score: {high_score}")  # High Score Text
+
+    # Move Scores to Corners
+    score_box.rect.topright = (W-6, 6)
+    high_score_box.rect.topleft = (6, 6)
 
     while True:
         display.fill(bg_colour)
@@ -38,6 +45,9 @@ if __name__ == '__main__':
                     # Setting up and Starting the Playing State
                     game_state = game_states["playing"]
                     snake.__init__()
+                    score = 0
+                    score_box.__init__(f"Score: {score}")
+                    score_box.rect.topright = (W - 6, 6)
                 # elif game_states["playing"]:
                 #     if event.key == pygame.K_f:
                 #         snake.grow()
@@ -50,6 +60,9 @@ if __name__ == '__main__':
         elif game_state == game_states["playing"]:
             # Food Collision
             if snake.hit_food(food):
+                score += 1
+                score_box.__init__(f"Score: {score}")
+                score_box.rect.topright = (W - 6, 6)
                 snake.grow()
 
                 food.rect.topleft = random_pos()
@@ -60,6 +73,12 @@ if __name__ == '__main__':
             if snake.is_dead():
                 text_box.__init__("Game Over. Press Space to Start.")
                 game_state = game_states["game-over"]
+                if score > high_score:
+                    write_high_score(score)
+                    high_score = get_high_score()
+                    high_score_box.__init__(f"High Score: {high_score}")
+                    high_score_box.rect.topleft = (6, 6)
+
                 screen_shake = FPS/8  # Screen Shake for an Eighth of a Second
 
             # Updating
@@ -68,13 +87,15 @@ if __name__ == '__main__':
             # Drawing
             display.blit(food.image, food.rect.topleft)
             snake.draw(display)
+            display.blit(score_box.text, score_box.rect.topleft)
 
         # Game Over Screen
         elif game_state == game_states["game-over"]:
-            display.blit(text_box.text, text_box.rect.topleft)
-
             # Drawing
             snake.draw(display)
+            display.blit(text_box.text, text_box.rect.topleft)
+            display.blit(score_box.text, score_box.rect.topleft)
+            display.blit(high_score_box.text, high_score_box.rect.topleft)
 
         # Implement Screen Shake
         if screen_shake <= 0:
